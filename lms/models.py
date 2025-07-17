@@ -9,7 +9,13 @@ class Course(models.Model):
         upload_to="lms/preview/", blank=True, null=True, verbose_name="Превью"
     )
     description = models.TextField(verbose_name="Описание")
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец курса")
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец курса",
+    )
 
     class Meta:
         verbose_name = "Курс"
@@ -30,7 +36,13 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name="Описание")
     link = models.URLField(verbose_name="Ссылка на видео", blank=True, null=True)
 
-    owner = models.ForeignKey(User, on_delete= models.SET_NULL, null = True, blank = True, verbose_name= "Владелец урока")
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец урока",
+    )
 
     class Meta:
         verbose_name = "Урок"
