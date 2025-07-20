@@ -50,3 +50,24 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        verbose_name="Пользователь",
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="subscribers",
+        verbose_name="Курс",
+    )
+
+    class Meta:
+        unique_together = ("user", "course")
+
+    def __str__(self):
+        return f"{self.user.email} is subscribed to {self.course.name}"

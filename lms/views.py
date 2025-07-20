@@ -1,10 +1,15 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from lms.models import Course, Lesson
+from lms.models import Course, Lesson, Subscription
+from lms.paginations import CustomPagination
 from lms.serialaizers import CourseSerializer, LessonSerializer
 from users.permissions import (IsModer, IsOwner, IsOwnerOrModer, NOTModer,
                                NOTModerOrIsOwner)
@@ -13,6 +18,7 @@ from users.permissions import (IsModer, IsOwner, IsOwnerOrModer, NOTModer,
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = CustomPagination
 
     def perform_create(self, serializer):
         course = serializer.save()
@@ -33,6 +39,7 @@ class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsOwner]
+    pagination_class = CustomPagination
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
@@ -62,3 +69,22 @@ class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, NOTModerOrIsOwner]
+
+
+class SubscribeUnsubscribeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data.get("course_id")
+        course = get_object_or_404(Course, pk=course_id)
+        subscription = Subscription.objects.filter(user=user, course=course)
+
+        if subscription.exists():  # Если подписка уже существует
+            subscription.delete()
+            message = "Подписка удалена."
+        else:  # Если подписки нет
+            Subscription.objects.create(user=user, course=course)
+            message = "Подписка добавлена."
+
+        return Response({"message": message}, status=status.HTTP_200_OK)
