@@ -17,6 +17,10 @@ class Course(models.Model):
         verbose_name="Владелец курса",
     )
 
+    price_id = models.CharField(
+        max_length=50, blank=True, null=True, verbose_name="Цена в Stripe"
+    )
+
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
