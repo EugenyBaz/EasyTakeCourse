@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from config import settings
+
 from .models import Payment, User
 from .permissions import IsOwner, IsOwnerOrModer
 from .serializers import (PaymentSerializer, PublicUserSerializer,
@@ -33,12 +34,10 @@ class UserCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         data = serializer.validated_data
-        password = data.pop('password')
+        password = data.pop("password")
         user = serializer.save(is_active=True)
         user.set_password(password)
         user.save()
-
-
 
 
 class UserViewSet(ModelViewSet):

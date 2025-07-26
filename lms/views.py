@@ -1,3 +1,5 @@
+import logging
+
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.utils.log import log_response
@@ -14,11 +16,12 @@ from config import settings
 from lms.models import Course, Lesson, Subscription
 from lms.paginations import CustomPagination
 from lms.serialaizers import CourseSerializer, LessonSerializer
+from lms.tasks import send_information_about_update_course
 from users.permissions import (IsModer, IsOwner, IsOwnerOrModer, NOTModer,
                                NOTModerOrIsOwner)
-from lms.tasks import send_information_about_update_course
-import logging
+
 logger = logging.getLogger(__name__)
+
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
@@ -37,7 +40,7 @@ class CourseViewSet(ModelViewSet):
         subscriptions = Subscription.objects.filter(course=instance.pk)
         # print(f"Subscriptions count: {subscriptions.count()}")
         if subscriptions.exists():
-            emails = list(subscriptions.values_list('user__email', flat=True))
+            emails = list(subscriptions.values_list("user__email", flat=True))
             logger.info(f"Fetching emails: {emails}")
             # print(f"Emails fetched: {emails}")# Берём электронные адреса подписчиков
             send_information_about_update_course.delay(emails)
@@ -53,7 +56,6 @@ class CourseViewSet(ModelViewSet):
         #     print("Ну, круто получил же письмо!")
         # except Exception as e:
         #     print(f"Ошибка доставки письма: {e}")
-
 
     def get_permissions(self):
         if self.action == "create":
