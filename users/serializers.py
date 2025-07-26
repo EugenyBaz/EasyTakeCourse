@@ -12,7 +12,9 @@ class PaymentSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ["password"]
+        fields = "__all__"
+        extra_kwargs = {
+            'password': {'write_only': True}}
 
 
 class PublicUserSerializer(serializers.ModelSerializer):
