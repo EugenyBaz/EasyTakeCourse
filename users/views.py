@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.exceptions import PermissionDenied
@@ -7,6 +8,8 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from config import settings
 
 from .models import Payment, User
 from .permissions import IsOwner, IsOwnerOrModer
@@ -30,8 +33,10 @@ class UserCreateAPIView(CreateAPIView):
     permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
+        data = serializer.validated_data
+        password = data.pop("password")
         user = serializer.save(is_active=True)
-        user.set_password(user.password)
+        user.set_password(password)
         user.save()
 
 
