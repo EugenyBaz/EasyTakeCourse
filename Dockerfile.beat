@@ -19,9 +19,9 @@ COPY requirements.txt ./
 # Устанавливаем зависимости Python
 RUN pip install --no-cache-dir -r requirements.txt
 
+
 # Копируем файл README.md в контейнер
 COPY README.md ./
-
 
 
 # Копируем исходный код приложения в контейнер
@@ -33,5 +33,5 @@ RUN mkdir -p /config/media
 # Пробрасываем порт, который будет использовать Django
 EXPOSE 8000
 
-# Команда для запуска приложения
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Команда для запуска Celery Beat
+CMD ["celery", "-A", "config", "beat", "--loglevel=info"]
