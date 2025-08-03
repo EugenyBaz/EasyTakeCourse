@@ -32,7 +32,7 @@
 - настроен проект для работы с celery и celery-beat
 - добавлена асинхронная рассылка пользователям(подписчикам), при обновлении курсов
 - с помощью celery-beat реализована фоновая задача на деактивацию пользователя заходившего более 30 дней назад
-
+- созданы файлы Dockerfile и docker-compose.yml
 
 
 ### Требования
@@ -41,7 +41,31 @@
 ### Установка зависимостей
 
 
-### Запуск Development сервера
+### Запуск проекта через docker-compose
+1. Клонируйте репозиторий на ваш компьютер:
+git clone https://github.com/EugenyBaz/EasyTakeCourse.git
+cd EasyTakeCourse
+
+2. Запустите проект с помощью Docker Compose:
+docker-compose up -d
+
+3. Проверьте, что Redis запущен и работает, выполнив следующую команду:
+docker exec -it easytakecourse-redis-1 redis-cli ping
+после успешного выполнения должно вернуться PONG
+
+4. Проверьте работоспособность PostgresQL, выполнив команды:
+docker exec -it easytakecourse-db-1 bash
+su - postgres
+psql
+
+При успешном выполнении вы должны увидеть приглашение SQL оболочки PostgreSQL,
+начинаться будет с #
+
+5. Откройте браузер и перейдите по адресЖЖ
+http://localhost:8000
+
+6. Остановить проект можно выполнив команду:
+docker-compose down
 
 
 ### Создание билда

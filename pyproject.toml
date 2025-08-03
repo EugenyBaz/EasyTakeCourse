@@ -4,9 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Bazavod <eugeny.bazavod@list.ru>"]
 readme = "README.md"
-
-[tool.poetry.packages]
-include = "config"
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.12"
